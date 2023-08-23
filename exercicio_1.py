@@ -33,7 +33,7 @@ def plotarHistograma(histograma_array):
 
 
 # Abre a imagem usando PIL
-image = Image.open('C:\einstein_cinza.jpg')
+image = Image.open('einstein_cinza.jpg')
 
 print("Formato da imagem: " + image.format)
 print("Tamanho da imagem: ",  image.size)
