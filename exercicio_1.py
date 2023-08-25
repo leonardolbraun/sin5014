@@ -2,7 +2,7 @@ from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 
-def analisaImagemEmEscalaCinza(image):
+def gerarHistograma(image):
     ## Documentação numpy https://numpy.org/pt/
     image_array = np.array(image)
     histograma_array = np.zeros(256);
@@ -31,16 +31,60 @@ def plotarHistograma(histograma_array):
     plt.title('Histograma da Imagem')
     plt.show()
 
+def clarearImagem(imagem, nivel):
+    imagem_array = np.array(imagem)
+    print(imagem_array)
+        
+    for i in range(imagem_array.shape[0]):
+        for j in range(imagem_array.shape[1]):
+            
+            #imagem_array[i, j] = np.clip(imagem_array[i, j]  + nivel, 0, 255)
+            novo_valor = imagem_array[i, j] + nivel
+
+            if(novo_valor > 255):
+                imagem_array[i, j] = 255
+
+            if(novo_valor < 0):
+                imagem_array[i, j] = 0
+    
+    print(imagem_array)
+    imagem_clareada = Image.fromarray(imagem_array)
+    imagem_clareada.save('imagem_clareada.jpg')
+    imagem_clareada.show()
+    
+def escurecerImagem(imagem, nivel):
+    imagem_array = np.array(imagem)
+    print(imagem_array)
+        
+    for i in range(imagem_array.shape[0]):
+        for j in range(imagem_array.shape[1]):
+            
+            #imagem_array[i, j] = np.clip(imagem_array[i, j]  + nivel, 0, 255)
+            novo_valor = imagem_array[i, j] - nivel
+
+            if(novo_valor > 255):
+                imagem_array[i, j] = 255
+
+            if(novo_valor < 0):
+                imagem_array[i, j] = 0
+    
+    print(imagem_array)
+    imagem_clareada = Image.fromarray(imagem_array)
+    imagem_clareada.save('imagem_escurecida.jpg')
+    imagem_clareada.show()
+
 
 # Abre a imagem usando PIL
-image = Image.open('einstein_cinza.jpg')
+imagem = Image.open('einstein_cinza.jpg')
 
-print("Formato da imagem: " + image.format)
-print("Tamanho da imagem: ",  image.size)
-print("Modo da imagem: " + image.mode)
+print("Formato da imagem: " + imagem.format)
+print("Tamanho da imagem: ",  imagem.size)
+print("Modo da imagem: " + imagem.mode)
 
 ##Documentação pillow https://pillow.readthedocs.io/en/stable/handbook/concepts.html
-if(image.mode == "L"):
-    plotarHistograma(analisaImagemEmEscalaCinza(image))
+if(imagem.mode == "L"):
+    plotarHistograma(gerarHistograma(imagem))
+    clarearImagem(imagem,10)
+    escurecerImagem(imagem,100)
 else:
     print("Precisa de imagem em escala de cinza")
