@@ -5,7 +5,7 @@ from PyQt5.QtGui import QImage, QPixmap, QIntValidator
 from PIL import Image, ImageQt
 import io
 import matplotlib.pyplot as plt
-from image_processing import gerar_histograma, clarear_imagem, escurecer_imagem, plotar_histograma
+from exercicio_1 import gerarHistograma, clarearImagem, escurecerImagem, plotarHistograma
 
 class Window(QMainWindow):
 
@@ -19,20 +19,20 @@ class Window(QMainWindow):
 
         main_layout = QHBoxLayout()
 
-        # Label to show image
+        # Label para exibir a imagem
         self.image_label = QLabel(self)
         self.image_label.setAlignment(Qt.AlignCenter)
         self.image_label.setMinimumSize(800, 600)  # Definindo um tamanho mínimo para visualização
         main_layout.addWidget(self.image_label)
 
-        # Right column of the window
+        # Coluna à direita
         right_layout = QVBoxLayout()
 
-        # QGroupBox to load image
+        # QGroupBox para carregamento
         load_groupbox = QGroupBox("Load Image")
         load_layout = QVBoxLayout()
 
-        # Button to load the image
+        # Botão para carregar imagem
         self.load_btn = QPushButton("Load Image")
         self.load_btn.clicked.connect(self.load_image)
         load_layout.addWidget(self.load_btn)
@@ -40,29 +40,29 @@ class Window(QMainWindow):
         load_groupbox.setLayout(load_layout)
         right_layout.addWidget(load_groupbox)
 
-         # QGroupBox to analyse the image
+         # QGroupBox para analise
         analyse_groupbox = QGroupBox("Image Analysis")
         analyse_layout = QVBoxLayout()
 
-        # Button to show histogram
+        # Botão para mostrar histograma
         self.histogram_btn = QPushButton("Show Histogram")
         self.histogram_btn.clicked.connect(self.show_histogram_window)
         analyse_layout.addWidget(self.histogram_btn)
 
-        self.load_image_label = QLabel("Image format:", self)
+        self.load_image_label = QLabel("Formato da imagem:", self)
         analyse_layout.addWidget(self.load_image_label)
 
-        self.load_image_label = QLabel("Image size:", self)
+        self.load_image_label = QLabel("Tamanho da imagem:", self)
         analyse_layout.addWidget(self.load_image_label)
 
-        self.load_image_label = QLabel("Image mode:", self)
+        self.load_image_label = QLabel("Modo da imagem:", self)
         analyse_layout.addWidget(self.load_image_label)
 
         analyse_groupbox.setLayout(analyse_layout)
         right_layout.addWidget(analyse_groupbox)
 
 
-        # QGroupBox to tone_input and buttons
+        # QGroupBox para tones_input e botões
         tones_groupbox = QGroupBox("Adjustment Controls")
         tones_layout = QVBoxLayout()
 
@@ -81,7 +81,7 @@ class Window(QMainWindow):
         tones_groupbox.setLayout(tones_layout)
         right_layout.addWidget(tones_groupbox)
 
-        # QGraphicsView to show histogram
+        # QGraphicsView para exibir o histograma
         self.histogram_view = QGraphicsView(self)
         self.histogram_scene = QGraphicsScene(self)
         self.histogram_view.setScene(self.histogram_scene)
@@ -108,15 +108,16 @@ class Window(QMainWindow):
 
     def show_histogram_window(self):
         if self.imagem:
-            histograma = gerar_histograma(self.imagem)
-            plotar_histograma(histograma)
+            histograma = gerarHistograma(self.imagem)
+            plotarHistograma(histograma)
 
     def show_histogram(self):
         if self.imagem:
-            histograma = gerar_histograma(self.imagem)
+            histograma = gerarHistograma(self.imagem)
             self.plot_and_update_histogram(histograma)
 
     def plot_and_update_histogram(self, histograma):
+        # Criando o histograma com matplotlib
         plt.figure(figsize=(4, 2))
         
         indices = range(len(histograma))
@@ -127,7 +128,7 @@ class Window(QMainWindow):
         plt.title('Histograma da Imagem')
         plt.tight_layout()
 
-        # Converting the graphic in a image to show on QGraphicsView
+        # Convertendo o gráfico em uma imagem para ser exibida no QGraphicsView
         buf = io.BytesIO()
         plt.savefig(buf, format="png")
         buf.seek(0)
@@ -143,14 +144,14 @@ class Window(QMainWindow):
 
     def brighten_image(self):
         if self.imagem:
-            nivel = int(self.tone_input.text())
-            self.imagem = clarear_imagem(self.imagem, nivel)
+            nivel = int(self.tones_input.text())
+            self.imagem = clarearImagem(self.imagem, nivel)
             self.update_image_display()
 
     def darken_image(self):
         if self.imagem:
-            nivel = int(self.tone_input.text())
-            self.imagem = escurecer_imagem(self.imagem, nivel)
+            nivel = int(self.tones_input.text())
+            self.imagem = escurecerImagem(self.imagem, nivel)
             self.update_image_display()
 
 app = QApplication(sys.argv)
