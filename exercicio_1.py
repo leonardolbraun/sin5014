@@ -33,7 +33,7 @@ def plotarHistograma(histograma_array):
 
 def clarearImagem(imagem, nivel):
     imagem_array = np.array(imagem)
-    print(imagem_array)
+    print("clarear")
         
     for i in range(imagem_array.shape[0]):
         for j in range(imagem_array.shape[1]):
@@ -42,19 +42,20 @@ def clarearImagem(imagem, nivel):
             novo_valor = imagem_array[i, j] + nivel
 
             if(novo_valor > 255):
-                imagem_array[i, j] = 255
+                novo_valor = 255
 
-            if(novo_valor < 0):
-                imagem_array[i, j] = 0
+            imagem_array[i, j] = novo_valor
     
-    print(imagem_array)
+    imagem = Image.fromarray(imagem_array)
+    return imagem
+    """ print(imagem_array)
     imagem_clareada = Image.fromarray(imagem_array)
     imagem_clareada.save('imagem_clareada.jpg')
-    imagem_clareada.show()
+    imagem_clareada.show() """
     
 def escurecerImagem(imagem, nivel):
     imagem_array = np.array(imagem)
-    print(imagem_array)
+    print("escurecer")
         
     for i in range(imagem_array.shape[0]):
         for j in range(imagem_array.shape[1]):
@@ -62,19 +63,20 @@ def escurecerImagem(imagem, nivel):
             #imagem_array[i, j] = np.clip(imagem_array[i, j]  + nivel, 0, 255)
             novo_valor = imagem_array[i, j] - nivel
 
-            if(novo_valor > 255):
-                imagem_array[i, j] = 255
-
             if(novo_valor < 0):
-                imagem_array[i, j] = 0
-    
-    print(imagem_array)
+                novo_valor = 0
+
+            imagem_array[i, j] = novo_valor
+
+    imagem = Image.fromarray(imagem_array)
+    return imagem
+    """print(imagem_array)
     imagem_clareada = Image.fromarray(imagem_array)
     imagem_clareada.save('imagem_escurecida.jpg')
-    imagem_clareada.show()
+    imagem_clareada.show() """
 
 
-# Abre a imagem usando PIL
+""" # Abre a imagem usando PIL
 imagem = Image.open('einstein_cinza.jpg')
 
 print("Formato da imagem: " + imagem.format)
@@ -88,3 +90,4 @@ if(imagem.mode == "L"):
     escurecerImagem(imagem,100)
 else:
     print("Precisa de imagem em escala de cinza")
+ """
