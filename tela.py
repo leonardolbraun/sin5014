@@ -49,14 +49,14 @@ class Window(QMainWindow):
         self.histogram_btn.clicked.connect(self.show_histogram_window)
         analyse_layout.addWidget(self.histogram_btn)
 
-        self.load_image_label = QLabel("Image format:", self)
-        analyse_layout.addWidget(self.load_image_label)
+        self.image_format_label = QLabel("Image format: ")
+        analyse_layout.addWidget(self.image_format_label)
 
-        self.load_image_label = QLabel("Image size:", self)
-        analyse_layout.addWidget(self.load_image_label)
+        self.image_size_label = QLabel("Image size: ")
+        analyse_layout.addWidget(self.image_size_label)
 
-        self.load_image_label = QLabel("Image mode:", self)
-        analyse_layout.addWidget(self.load_image_label)
+        self.image_mode_label = QLabel("Image mode: ")
+        analyse_layout.addWidget(self.image_mode_label)
 
         analyse_groupbox.setLayout(analyse_layout)
         right_layout.addWidget(analyse_groupbox)
@@ -98,6 +98,11 @@ class Window(QMainWindow):
         if filepath:
             self.imagem = Image.open(filepath)
             self.update_image_display()
+
+            # Update labels when an image is loaded
+            self.image_format_label.setText("Image format: " + self.imagem.format)
+            self.image_size_label.setText("Image size: " + str(self.imagem.size))
+            self.image_mode_label.setText("Image mode: " + self.imagem.mode)
 
     def update_image_display(self):
         qt_image = ImageQt.ImageQt(self.imagem)
