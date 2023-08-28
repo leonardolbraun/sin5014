@@ -1,5 +1,6 @@
 from PIL import Image
 import numpy as np
+import math
 import matplotlib.pyplot as plt
 
 def gerar_histograma(image):
@@ -77,6 +78,72 @@ def escurecer_imagem(imagem, nivel):
 
 
 """ # Abre a imagem usando PIL
+
+def filtro_mediana(imagem, numero_vizinhos):
+    imagem_array = np.array(imagem)
+    altura, largura = imagem_array.shape[:2]
+
+    for i in range(min(150,imagem_array.shape[0])):
+        for j in range(min(150, imagem_array.shape[1])):
+
+            matriz_vizinhanca = imagem_array[max(0, i-1):min(i+2, altura), max(0, j-1):min(j+2, largura)]
+
+            imagem_array_vizinhanca = []
+                      
+            for k in range(matriz_vizinhanca.shape[0]):
+                for a in range(matriz_vizinhanca.shape[1]):
+                        print("Vizinhos de " + str(imagem_array[i, j]))
+                        print("linha " + str(k) + "coluna" + str(a))
+                        imagem_array_vizinhanca.append(matriz_vizinhanca[k, a])
+
+            imagem_array_ordenado = sorted(imagem_array_vizinhanca)  
+            if len(imagem_array_ordenado) % 2 != 0:
+                mediana = imagem_array_ordenado[len(imagem_array_ordenado) // 2]
+                imagem_array[i, j] = mediana
+            else:
+                indice_maior = round(len(imagem_array_ordenado)/2)
+                indice_menor = math.floor((len(imagem_array_ordenado)/2))
+                mediana = (imagem_array_ordenado[indice_maior] + imagem_array_ordenado[indice_menor]) / 2
+                imagem_array[i, j] = int(mediana)
+                
+    imagem_mediana = Image.fromarray(imagem_array.astype(np.uint8))
+    imagem_mediana.save('imagem_mediana.jpg')
+    imagem_mediana.show()
+
+   
+    # imagem_array_ordenado = sorted(imagem_array_completo)        
+    # #for k in imagem_array_ordenado:
+    # if(len(imagem_array_ordenado) % 2 == 0 ):
+    #     print("#########")
+    #     #print("Indice k: " + str(k))
+    #     print("Tamanho do array: " + str(len(imagem_array_ordenado)))
+
+    #     #print("Valor: " + str(imagem_array_ordenado[k]))
+    #     print("par: " + str(len(imagem_array_ordenado)/2))
+    #     print (round(len(imagem_array_ordenado)/2))
+    # else:
+    #     print("#########")
+    #     #print("Indice k: " + str(k))
+    #     print("Tamanho do array: " + str(len(imagem_array_ordenado)))
+    #     print("impar: " + str(len(imagem_array_ordenado)/2))
+    #     indice_maior = round(len(imagem_array_ordenado)/2)
+    #     indice_menor = math.floor((len(imagem_array_ordenado)/2))
+    #     mediana = (imagem_array_ordenado[indice_maior] + imagem_array_ordenado[indice_menor]) / 2
+    #     #print("valor maior: " + str(imagem_array_ordenado[int(round(len(imagem_array_ordenado))/2))
+    #     #print("Indice: " + str(k))
+    #     print ("Média entre indices: " + str(indice_maior) + " e " + str(indice_menor))
+    #     print("Média dos Valores: " +  str(imagem_array_ordenado[indice_maior]) + " e " + str(imagem_array_ordenado[indice_menor]))
+    #     print("Mediana: " + str(mediana))
+
+    
+    print("teste")       
+    imagem_array_ordenado = sorted(imagem_array_completo)
+    
+    print (len(imagem_array_ordenado)/2);
+
+
+imagem = Image.open('einstein_cinza.jpg')
+filtro_mediana(imagem, 8)
 """imagem = Image.open('einstein_cinza.jpg')
 
 print("Formato da imagem: " + imagem.format)
