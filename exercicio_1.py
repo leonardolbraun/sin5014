@@ -73,11 +73,11 @@ def escurecerImagem(imagem, nivel):
     """print(imagem_array)
     imagem_clareada = Image.fromarray(imagem_array)
     imagem_clareada.save('imagem_escurecida.jpg')
-    imagem_clareada.show() """
+    imagem_clareada.show() "
 
 
 """ # Abre a imagem usando PIL
-imagem = Image.open('einstein_cinza.jpg')
+"""imagem = Image.open('einstein_cinza.jpg')
 
 print("Formato da imagem: " + imagem.format)
 print("Tamanho da imagem: ",  imagem.size)
@@ -90,4 +90,4 @@ if(imagem.mode == "L"):
     escurecerImagem(imagem,100)
 else:
     print("Precisa de imagem em escala de cinza")
- """
+"""
