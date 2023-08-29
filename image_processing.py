@@ -150,6 +150,39 @@ def filtro_mediana(imagem, raio):
     #print (len(imagem_array_ordenado)/2);
 
 
+def equalizacao(imagem):
+    imagem_array = np.array(imagem)
+
+    histograma = gerar_histograma(imagem)
+
+    plotar_histograma(histograma)
+
+    print("Número ideal de pixel: " + str(imagem.size))
+
+    largura, altura = imagem.size
+    niveis_cinza = 0
+    
+    for i in histograma:
+        if i > 0:
+            niveis_cinza += 1
+        
+    print("niveis cinza: " + str(niveis_cinza))
+    numero_ideal_pixels = (largura*altura)/niveis_cinza
+    print("Número ideal de pixels em cada nível: " + str(numero_ideal_pixels))
+
+    histograma_equalizado = np.zeros(256)
+
+    for index, i in enumerate(histograma):
+        if i > 0:
+            q = max(0,round(i/numero_ideal_pixels) - 1)
+            histograma_equalizado[index] += q
+
+    plotar_histograma(histograma_equalizado)
+        
+
+imagem = Image.open('einstein_cinza.jpg')
+equalizacao(imagem)
+
 #imagem = Image.open('einstein_cinza.jpg')
 #filtro_mediana(imagem, 8)
 """imagem = Image.open('einstein_cinza.jpg')
