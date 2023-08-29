@@ -79,14 +79,18 @@ def escurecer_imagem(imagem, nivel):
 
 """ # Abre a imagem usando PIL
 
-def filtro_mediana(imagem, numero_vizinhos):
+def filtro_mediana(imagem, raio):
     imagem_array = np.array(imagem)
     altura, largura = imagem_array.shape[:2]
+
+    tamanho_janela = 2 * raio + 1
+
+    deslocamento = tamanho_janela // 2
 
     for i in range(imagem_array.shape[0]):
         for j in range(imagem_array.shape[1]):
 
-            matriz_vizinhanca = imagem_array[max(0, i-1):min(i+2, altura), max(0, j-1):min(j+2, largura)]
+            matriz_vizinhanca = imagem_array[max(0, i-deslocamento):min(i + deslocamento + 1, altura), max(0, j - deslocamento):min(j+deslocamento+1, largura)]
 
             imagem_array_vizinhanca = []
                       
