@@ -5,7 +5,7 @@ from PyQt5.QtGui import QImage, QPixmap, QIntValidator
 from PIL import Image, ImageQt
 import io
 import matplotlib.pyplot as plt
-from image_processing import gerar_histograma, clarear_imagem, escurecer_imagem, plotar_histograma
+from image_processing import gerar_histograma, clarear_imagem, escurecer_imagem, plotar_histograma, filtro_mediana
 
 class Window(QMainWindow):
 
@@ -61,8 +61,7 @@ class Window(QMainWindow):
         analyse_groupbox.setLayout(analyse_layout)
         right_layout.addWidget(analyse_groupbox)
 
-
-        # QGroupBox to tone_input and buttons
+        # QGroupBox for tone_input and buttons
         tones_groupbox = QGroupBox("Adjustment Controls")
         tones_layout = QVBoxLayout()
 
@@ -80,6 +79,22 @@ class Window(QMainWindow):
 
         tones_groupbox.setLayout(tones_layout)
         right_layout.addWidget(tones_groupbox)
+
+         # QGroupBox for filters
+        filters_groupbox = QGroupBox("Filters")
+        filters_layout = QVBoxLayout()
+
+
+        self.filter_input = QLineEdit(self)
+        self.filter_input.setValidator(QIntValidator(0, 255))
+        filters_layout.addWidget(self.filter_input)
+
+        self.median_filter_btn = QPushButton("Median Filter")
+        self.median_filter_btn.clicked.connect(self.median_filter)
+        filters_layout.addWidget(self.median_filter_btn)
+
+        filters_groupbox.setLayout(filters_layout)
+        right_layout.addWidget(filters_groupbox)
 
         # QGraphicsView to show histogram
         self.histogram_view = QGraphicsView(self)
@@ -156,6 +171,12 @@ class Window(QMainWindow):
         if self.imagem:
             nivel = int(self.tone_input.text())
             self.imagem = escurecer_imagem(self.imagem, nivel)
+            self.update_image_display()
+
+    def median_filter(self):
+        if self.imagem:
+            vizinhos = int(self.filter_input.text())
+            self.imagem = filtro_mediana(self.imagem, vizinhos)
             self.update_image_display()
 
 app = QApplication(sys.argv)
