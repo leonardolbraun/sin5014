@@ -152,15 +152,14 @@ def filtro_mediana(imagem, raio):
 
 def equalizacao(imagem):
     imagem_array = np.array(imagem)
-
-    histograma = gerar_histograma(imagem)
-
-    plotar_histograma(histograma)
-
-    print("Número ideal de pixel: " + str(imagem.size))
-
     largura, altura = imagem.size
     niveis_cinza = 0
+    histograma_equalizado = np.zeros(256)
+    acumulado = np.zeros(256)
+    vetor_posicoes = []
+
+    histograma = gerar_histograma(imagem)
+    print("Tamanho da imagem: " + str(imagem.size))
     
     for i in histograma:
         if i > 0:
@@ -170,18 +169,32 @@ def equalizacao(imagem):
     numero_ideal_pixels = (largura*altura)/niveis_cinza
     print("Número ideal de pixels em cada nível: " + str(numero_ideal_pixels))
 
-    histograma_equalizado = np.zeros(256)
-
     for index, i in enumerate(histograma):
-        if i > 0:
-            q = max(0,round(i/numero_ideal_pixels) - 1)
-            histograma_equalizado[index] += q
+        if index >= 0:    
+            acumulado[index] = acumulado[index - 1] + i;
+            q = max(0,round(acumulado[index]/numero_ideal_pixels) - 1)
+            vetor_posicoes.append(q)
 
-    plotar_histograma(histograma_equalizado)
-        
+            print("teste " + str(q))
+            histograma_equalizado[q] += i
 
-imagem = Image.open('einstein_cinza.jpg')
-equalizacao(imagem)
+    #for index, i in enumerate(vetor_posicoes):
+        #print("index: " + str(index) + "value: " + str(i))
+
+    for i in range(imagem_array.shape[0]):
+        for j in range(imagem_array.shape[1]):
+            #print("cor original: " + str( imagem_array[i, j]) + " - nova cor: " + str(vetor_posicoes[imagem_array[i, j]]))
+            imagem_array[i, j] = vetor_posicoes[imagem_array[i, j]]
+
+    imagem = Image.fromarray(imagem_array)
+    return imagem
+
+    # imagem_equalizada = Image.fromarray(imagem_array)
+    # imagem_equalizada.save('imagem_equalizada.jpg')
+    # imagem_equalizada.show() 
+
+# imagem = Image.open('einstein_cinza.jpg')
+# equalizacao(imagem)
 
 #imagem = Image.open('einstein_cinza.jpg')
 #filtro_mediana(imagem, 8)

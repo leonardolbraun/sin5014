@@ -5,7 +5,7 @@ from PyQt5.QtGui import QImage, QPixmap, QIntValidator
 from PIL import Image, ImageQt
 import io
 import matplotlib.pyplot as plt
-from image_processing import gerar_histograma, clarear_imagem, escurecer_imagem, plotar_histograma, filtro_mediana
+from image_processing import gerar_histograma, clarear_imagem, escurecer_imagem, plotar_histograma, filtro_mediana, equalizacao
 
 class Window(QMainWindow):
 
@@ -93,6 +93,10 @@ class Window(QMainWindow):
         self.median_filter_btn.clicked.connect(self.median_filter)
         filters_layout.addWidget(self.median_filter_btn)
 
+        self.equalization_filter_btn = QPushButton("Equalization Filter")
+        self.equalization_filter_btn.clicked.connect(self.equalization_filter)
+        filters_layout.addWidget(self.equalization_filter_btn)
+
         filters_groupbox.setLayout(filters_layout)
         right_layout.addWidget(filters_groupbox)
 
@@ -177,6 +181,11 @@ class Window(QMainWindow):
         if self.imagem:
             vizinhos = int(self.filter_input.text())
             self.imagem = filtro_mediana(self.imagem, vizinhos)
+            self.update_image_display()
+
+    def equalization_filter(self):
+        if self.imagem:
+            self.imagem = equalizacao(self.imagem)
             self.update_image_display()
 
 app = QApplication(sys.argv)
