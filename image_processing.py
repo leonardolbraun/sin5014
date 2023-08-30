@@ -133,13 +133,21 @@ def quantizacao(imagem, tons):
         if i > 0:
             niveis_cinza += 1
 
-    niveis = round(niveis_cinza / tons)
+    niveis = round(niveis_cinza / (tons-1))
 
     for i in range(imagem_array.shape[0]):
         for j in range(imagem_array.shape[1]):
             cor = imagem_array[i, j]
             nivel_pixel = round(cor/niveis)
-            imagem_array[i, j] = int(round((nivel_pixel * niveis) + niveis / 2))
+            novo_valor = int(round((nivel_pixel * niveis) + niveis / 2))
+            
+            if(novo_valor < 0):
+                novo_valor = 0
+            
+            if(novo_valor > 255):
+                novo_valor = 255
+
+            imagem_array[i, j] = novo_valor
 
     imagem = Image.fromarray(imagem_array)
     return imagem
