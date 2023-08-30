@@ -170,12 +170,10 @@ def equalizacao(imagem):
     print("Número ideal de pixels em cada nível: " + str(numero_ideal_pixels))
 
     for index, i in enumerate(histograma):
-        if index >= 0:    
+        if index >= 0: 
             acumulado[index] = acumulado[index - 1] + i;
             q = max(0,round(acumulado[index]/numero_ideal_pixels) - 1)
             vetor_posicoes.append(q)
-
-            print("teste " + str(q))
             histograma_equalizado[q] += i
 
     #for index, i in enumerate(vetor_posicoes):
