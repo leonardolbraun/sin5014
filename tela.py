@@ -136,7 +136,7 @@ class Window(QMainWindow):
     def show_histogram_window(self):
         if self.imagem:
             histograma = gerar_histograma(self.imagem)
-            plotar_histograma(histograma)
+            plotar_histograma(histograma, 17, 1)
 
     def show_histogram(self):
         if self.imagem:
@@ -146,13 +146,27 @@ class Window(QMainWindow):
     def plot_and_update_histogram(self, histograma):
         plt.figure(figsize=(4, 2))
         
-        indices = range(len(histograma))
-        plt.bar(indices, histograma)
-        plt.xticks(indices[::51])
-        plt.xlabel('Cor')
-        plt.ylabel('Frequência')
-        plt.title('Histograma da Imagem')
-        plt.tight_layout()
+        plotar_histograma(histograma, 51, 0)
+
+        # indices = range(len(histograma))
+        # plt.bar(indices, histograma)
+        # plt.xticks(indices[::51])
+        # plt.xlabel('Cor')
+        # plt.ylabel('Frequência')
+        # plt.title('Histograma da Imagem')
+        # plt.tight_layout()
+
+
+        # indices = np.arange(len(histograma_array))
+
+        # plt.bar(indices, histograma_array)
+        # plt.xticks(indices[::17])
+        # plt.xlabel('Cor')
+        # plt.ylabel('Frequência')
+        # plt.title('Histograma da Imagem')
+        # plt.show()
+
+
 
         # Converting the graphic in a image to show on QGraphicsView
         buf = io.BytesIO()

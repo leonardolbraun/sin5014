@@ -21,16 +21,18 @@ def gerar_histograma(image):
 
     return histograma_array
 
-def plotar_histograma(histograma_array):
+def plotar_histograma(histograma_array, qtde_indices, show_window):
     # Documentação do matplotlib https://gepac.github.io/2019-05-17-intro-matplotlib/
     indices = np.arange(len(histograma_array))
 
     plt.bar(indices, histograma_array)
-    plt.xticks(indices[::17])
+    plt.xticks(indices[::int(qtde_indices)])
     plt.xlabel('Cor')
     plt.ylabel('Frequência')
     plt.title('Histograma da Imagem')
-    plt.show()
+    plt.tight_layout()
+    if show_window:
+        plt.show()
 
 def clarear_imagem(imagem, nivel):
     imagem_array = np.array(imagem)
