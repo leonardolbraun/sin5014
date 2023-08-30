@@ -8,7 +8,7 @@ def gerar_histograma(image):
     image_array = np.array(image)
     histograma_array = np.zeros(256);
 
-    print(image_array)
+    # print(image_array)
 
     for i in range(image_array.shape[0]):
         for j in range(image_array.shape[1]):
@@ -16,8 +16,8 @@ def gerar_histograma(image):
 
             histograma_array[valor_pixel] += 1 
 
-    for k in range(len(histograma_array)):
-        print("Valor de " + str(k) + ": " + str(histograma_array[k]))
+    # for k in range(len(histograma_array)):
+    #     print("Valor de " + str(k) + ": " + str(histograma_array[k]))
 
     return histograma_array
 
@@ -190,6 +190,34 @@ def equalizacao(imagem):
     # imagem_equalizada = Image.fromarray(imagem_array)
     # imagem_equalizada.save('imagem_equalizada.jpg')
     # imagem_equalizada.show() 
+
+
+def quantizacao(imagem, tons):
+    imagem_array = np.array(imagem)
+    histograma = gerar_histograma(imagem)
+
+    niveis_cinza = 0
+    for i in histograma:
+        if i > 0:
+            niveis_cinza += 1
+
+    niveis = round(niveis_cinza / tons)
+    print("tons de cinza: " + str(niveis))
+
+    for i in range(imagem_array.shape[0]):
+        for j in range(imagem_array.shape[1]):
+            cor = imagem_array[i, j]
+            nivel_pixel = round(cor/niveis)
+            imagem_array[i, j] = int(round((nivel_pixel * niveis) + niveis / 2))
+
+    imagem = Image.fromarray(imagem_array)
+    return imagem
+
+#imagem = Image.open('einstein_cinza.jpg')
+#filtro_mediana(imagem, 8)
+
+
+
 
 # imagem = Image.open('einstein_cinza.jpg')
 # equalizacao(imagem)

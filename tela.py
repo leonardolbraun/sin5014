@@ -5,7 +5,7 @@ from PyQt5.QtGui import QImage, QPixmap, QIntValidator
 from PIL import Image, ImageQt
 import io
 import matplotlib.pyplot as plt
-from image_processing import gerar_histograma, clarear_imagem, escurecer_imagem, plotar_histograma, filtro_mediana, equalizacao
+from image_processing import gerar_histograma, clarear_imagem, escurecer_imagem, plotar_histograma, filtro_mediana, equalizacao, quantizacao
 
 class Window(QMainWindow):
 
@@ -84,7 +84,6 @@ class Window(QMainWindow):
         filters_groupbox = QGroupBox("Filters")
         filters_layout = QVBoxLayout()
 
-
         self.filter_input = QLineEdit(self)
         self.filter_input.setValidator(QIntValidator(0, 255))
         filters_layout.addWidget(self.filter_input)
@@ -96,6 +95,10 @@ class Window(QMainWindow):
         self.equalization_filter_btn = QPushButton("Equalization Filter")
         self.equalization_filter_btn.clicked.connect(self.equalization_filter)
         filters_layout.addWidget(self.equalization_filter_btn)
+
+        self.quantization_filter_btn = QPushButton("Quantization Filter")
+        self.quantization_filter_btn.clicked.connect(self.quantization_filter)
+        filters_layout.addWidget(self.quantization_filter_btn)
 
         filters_groupbox.setLayout(filters_layout)
         right_layout.addWidget(filters_groupbox)
@@ -186,6 +189,12 @@ class Window(QMainWindow):
     def equalization_filter(self):
         if self.imagem:
             self.imagem = equalizacao(self.imagem)
+            self.update_image_display()
+
+    def quantization_filter(self):
+        if self.imagem:
+            tons = int(self.filter_input.text())
+            self.imagem = quantizacao(self.imagem, tons)
             self.update_image_display()
 
 app = QApplication(sys.argv)
