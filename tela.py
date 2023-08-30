@@ -37,6 +37,10 @@ class Window(QMainWindow):
         self.load_btn.clicked.connect(self.load_image)
         load_layout.addWidget(self.load_btn)
 
+        self.save_btn = QPushButton("Save Image")
+        self.save_btn.clicked.connect(self.save_image)
+        load_layout.addWidget(self.save_btn)
+
         load_groupbox.setLayout(load_layout)
         right_layout.addWidget(load_groupbox)
 
@@ -126,6 +130,13 @@ class Window(QMainWindow):
             self.image_size_label.setText("Image size: " + str(self.imagem.size))
             self.image_mode_label.setText("Image mode: " + self.imagem.mode)
 
+    def save_image(self):
+        # Salvar a imagem usando uma caixa de diálogo
+        file_path, _ = QFileDialog.getSaveFileName(self, "Save Image", "", "JPEG (*.jpg *.jpeg)")
+            
+        if file_path:
+            self.imagem.save(file_path)
+    
     def update_image_display(self):
         qt_image = ImageQt.ImageQt(self.imagem)
         pixmap = QPixmap.fromImage(qt_image)
@@ -147,26 +158,6 @@ class Window(QMainWindow):
         plt.figure(figsize=(4, 2))
         
         plotar_histograma(histograma, 51, 0)
-
-        # indices = range(len(histograma))
-        # plt.bar(indices, histograma)
-        # plt.xticks(indices[::51])
-        # plt.xlabel('Cor')
-        # plt.ylabel('Frequência')
-        # plt.title('Histograma da Imagem')
-        # plt.tight_layout()
-
-
-        # indices = np.arange(len(histograma_array))
-
-        # plt.bar(indices, histograma_array)
-        # plt.xticks(indices[::17])
-        # plt.xlabel('Cor')
-        # plt.ylabel('Frequência')
-        # plt.title('Histograma da Imagem')
-        # plt.show()
-
-
 
         # Converting the graphic in a image to show on QGraphicsView
         buf = io.BytesIO()
