@@ -149,7 +149,6 @@ def filtro_mediana(imagem, raio):
     
     #print (len(imagem_array_ordenado)/2);
 
-
 def equalizacao(imagem):
     imagem_array = np.array(imagem)
     largura, altura = imagem.size
@@ -191,7 +190,6 @@ def equalizacao(imagem):
     # imagem_equalizada.save('imagem_equalizada.jpg')
     # imagem_equalizada.show() 
 
-
 def quantizacao(imagem, tons):
     imagem_array = np.array(imagem)
     histograma = gerar_histograma(imagem)
@@ -212,15 +210,6 @@ def quantizacao(imagem, tons):
 
     imagem = Image.fromarray(imagem_array)
     return imagem
-
-#imagem = Image.open('einstein_cinza.jpg')
-#filtro_mediana(imagem, 8)
-
-
-
-
-# imagem = Image.open('einstein_cinza.jpg')
-# equalizacao(imagem)
 
 #imagem = Image.open('einstein_cinza.jpg')
 #filtro_mediana(imagem, 8)
