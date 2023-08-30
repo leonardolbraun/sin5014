@@ -1,5 +1,4 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QHBoxLayout, QLabel, QWidget, QFileDialog, QLineEdit, QGraphicsView, QGraphicsScene, QHBoxLayout, QGroupBox
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QHBoxLayout, QLabel, QWidget, QFileDialog, QLineEdit, QGraphicsView, QGraphicsScene, QHBoxLayout, QGroupBox
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QImage, QPixmap, QIntValidator
 from PIL import Image, ImageQt
@@ -201,8 +200,3 @@ class Window(QMainWindow):
             tons = int(self.filter_input.text())
             self.imagem = quantizacao(self.imagem, tons)
             self.update_image_display()
-
-app = QApplication(sys.argv)
-window = Window()
-window.show()
-app.exec_()
