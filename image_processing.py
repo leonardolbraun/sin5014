@@ -2,10 +2,19 @@ from PIL import Image
 import numpy as np
 import math
 import matplotlib.pyplot as plt
+from numba import jit, cuda
 
-def gerar_histograma(image):
+def gerar_array_imagem(imagem):
+    image_array = np.array(imagem)
+    return image_array
+
+def gerar_imagem(imagem_array):
+    imagem = Image.fromarray(imagem_array)
+    return imagem 
+
+@jit(nopython=True)
+def gerar_histograma(image_array):
     ## Documentação numpy https://numpy.org/pt/
-    image_array = np.array(image)
     histograma_array = np.zeros(256)
 
     for i in range(image_array.shape[0]):
@@ -29,8 +38,8 @@ def plotar_histograma(histograma_array, qtde_indices, show_window):
     if show_window:
         plt.show()
 
-def clarear_imagem(imagem, nivel):
-    imagem_array = np.array(imagem)
+@jit(nopython=True)
+def clarear_imagem(imagem_array, nivel):
         
     for i in range(imagem_array.shape[0]):
         for j in range(imagem_array.shape[1]):
@@ -42,11 +51,10 @@ def clarear_imagem(imagem, nivel):
 
             imagem_array[i, j] = novo_valor
     
-    imagem = Image.fromarray(imagem_array)
-    return imagem
-    
-def escurecer_imagem(imagem, nivel):
-    imagem_array = np.array(imagem)
+    return imagem_array
+
+@jit(nopython=True) 
+def escurecer_imagem(imagem_array, nivel):
         
     for i in range(imagem_array.shape[0]):
         for j in range(imagem_array.shape[1]):
@@ -58,11 +66,10 @@ def escurecer_imagem(imagem, nivel):
 
             imagem_array[i, j] = novo_valor
 
-    imagem = Image.fromarray(imagem_array)
-    return imagem
+    return imagem_array
 
-def filtro_mediana(imagem, raio):
-    imagem_array = np.array(imagem)
+@jit(nopython=True)
+def filtro_mediana(imagem_array, raio):
     altura, largura = imagem_array.shape[:2]
 
     tamanho_janela = 2 * raio + 1
@@ -90,24 +97,20 @@ def filtro_mediana(imagem, raio):
                 mediana = (int(imagem_array_ordenado[indice_maior]) + int(imagem_array_ordenado[indice_menor])) / 2
                 imagem_array[i, j] = int(mediana)
                 
-    imagem = Image.fromarray(imagem_array)
-    return imagem
+    return imagem_array
 
-def equalizacao(imagem):
-    imagem_array = np.array(imagem)
-    largura, altura = imagem.size
+@jit(nopython=True)
+def equalizacao(imagem_array, largura_imagem, altura_imagem, histograma):
     niveis_cinza = 0
     histograma_equalizado = np.zeros(256)
     acumulado = np.zeros(256)
     vetor_posicoes = []
-
-    histograma = gerar_histograma(imagem)
     
     for i in histograma:
         if i > 0:
             niveis_cinza += 1
         
-    numero_ideal_pixels = (largura*altura)/niveis_cinza
+    numero_ideal_pixels = (largura_imagem*altura_imagem)/niveis_cinza
 
     for index, i in enumerate(histograma):
         if index >= 0: 
@@ -121,12 +124,10 @@ def equalizacao(imagem):
 
             imagem_array[i, j] = vetor_posicoes[imagem_array[i, j]]
 
-    imagem = Image.fromarray(imagem_array)
-    return imagem
+    return imagem_array
 
-def quantizacao(imagem, tons):
-    imagem_array = np.array(imagem)
-    histograma = gerar_histograma(imagem)
+@jit(nopython=True)
+def quantizacao(imagem_array, tons, histograma):
 
     niveis_cinza = 0
     for i in histograma:
@@ -149,8 +150,7 @@ def quantizacao(imagem, tons):
 
             imagem_array[i, j] = novo_valor
 
-    imagem = Image.fromarray(imagem_array)
-    return imagem
+    return imagem_array
 
 """imagem = Image.open('einstein_cinza.jpg')
 

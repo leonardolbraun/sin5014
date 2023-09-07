@@ -4,7 +4,7 @@ from PyQt5.QtGui import QImage, QPixmap, QIntValidator
 from PIL import Image, ImageQt
 import io
 import matplotlib.pyplot as plt
-from image_processing import gerar_histograma, clarear_imagem, escurecer_imagem, plotar_histograma, filtro_mediana, equalizacao, quantizacao
+from image_processing import gerar_imagem, gerar_array_imagem, gerar_histograma, clarear_imagem, escurecer_imagem, plotar_histograma, filtro_mediana, equalizacao, quantizacao
 
 class Window(QMainWindow):
 
@@ -145,12 +145,14 @@ class Window(QMainWindow):
 
     def show_histogram_window(self):
         if self.imagem:
-            histograma = gerar_histograma(self.imagem)
+            imagem_array = gerar_array_imagem(self.imagem)
+            histograma = gerar_histograma(imagem_array)
             plotar_histograma(histograma, 17, 1)
 
     def show_histogram(self):
         if self.imagem:
-            histograma = gerar_histograma(self.imagem)
+            imagem_array = gerar_array_imagem(self.imagem)
+            histograma = gerar_histograma(imagem_array)
             self.plot_and_update_histogram(histograma)
 
     def plot_and_update_histogram(self, histograma):
@@ -174,29 +176,42 @@ class Window(QMainWindow):
 
     def brighten_image(self):
         if self.imagem:
+            imagem_array = gerar_array_imagem(self.imagem)
             nivel = int(self.tone_input.text())
-            self.imagem = clarear_imagem(self.imagem, nivel)
+            nova_imagem_array = clarear_imagem(imagem_array, nivel)
+            self.imagem = gerar_imagem(nova_imagem_array)
             self.update_image_display()
 
     def darken_image(self):
         if self.imagem:
+            imagem_array = gerar_array_imagem(self.imagem)
             nivel = int(self.tone_input.text())
-            self.imagem = escurecer_imagem(self.imagem, nivel)
+            nova_imagem_array = escurecer_imagem(imagem_array, nivel)
+            self.imagem = gerar_imagem(nova_imagem_array)
             self.update_image_display()
 
     def median_filter(self):
         if self.imagem:
+            imagem_array = gerar_array_imagem(self.imagem)
             vizinhos = int(self.filter_input.text())
-            self.imagem = filtro_mediana(self.imagem, vizinhos)
+            nova_imagem_array = filtro_mediana(imagem_array, vizinhos)
+            self.imagem = gerar_imagem(nova_imagem_array)
             self.update_image_display()
 
     def equalization_filter(self):
         if self.imagem:
-            self.imagem = equalizacao(self.imagem)
+            imagem_array = gerar_array_imagem(self.imagem)
+            largura_imagem, altura_imagem = self.imagem.size
+            histograma = gerar_histograma(imagem_array)
+            nova_imagem_array = equalizacao(imagem_array, largura_imagem, altura_imagem, histograma)
+            self.imagem = gerar_imagem(nova_imagem_array)
             self.update_image_display()
 
     def quantization_filter(self):
         if self.imagem:
+            imagem_array = gerar_array_imagem(self.imagem)
             tons = int(self.filter_input.text())
-            self.imagem = quantizacao(self.imagem, tons)
+            histograma = gerar_histograma(imagem_array)
+            nova_imagem_array = quantizacao(imagem_array, tons, histograma)
+            self.imagem = gerar_imagem(nova_imagem_array)
             self.update_image_display()
