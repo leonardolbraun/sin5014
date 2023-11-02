@@ -4,6 +4,7 @@ from PyQt5.QtGui import QImage, QPixmap, QIntValidator
 from PIL import Image, ImageQt
 import io
 import matplotlib.pyplot as plt
+from edge_detection import line_direction_detector
 from image_processing import gerar_imagem, gerar_array_imagem, gerar_histograma, clarear_imagem, escurecer_imagem, plotar_histograma, filtro_mediana, equalizacao, quantizacao
 
 class Window(QMainWindow):
@@ -106,6 +107,22 @@ class Window(QMainWindow):
         filters_groupbox.setLayout(filters_layout)
         right_layout.addWidget(filters_groupbox)
 
+        # QGroupBox for edge detection
+        edge_groupbox = QGroupBox("Edge Detection")
+        edge_layout = QVBoxLayout()
+
+        self.line_detector_btn = QPushButton("Line direction detector")
+        self.line_detector_btn.clicked.connect(self.line_detector)
+        edge_layout.addWidget(self.line_detector_btn)
+
+        self.line_direction_label = QLabel("Line direction: ")
+        edge_layout.addWidget(self.line_direction_label)
+
+        edge_groupbox.setLayout(edge_layout)
+        right_layout.addWidget(edge_groupbox)
+
+
+
         # QGraphicsView to show histogram
         self.histogram_view = QGraphicsView(self)
         self.histogram_scene = QGraphicsScene(self)
@@ -122,10 +139,13 @@ class Window(QMainWindow):
         filepath, _ = QFileDialog.getOpenFileName(self, "Load Image", "", "Images (*.png *.xpm *.jpg *.bmp);;All Files (*)")
         if filepath:
             self.imagem = Image.open(filepath)
+            if(self.imagem.mode != "L"):
+                self.imagem = self.imagem.convert('L')
+            
             self.update_image_display()
 
             # Update labels when an image is loaded
-            self.image_format_label.setText("Image format: " + self.imagem.format)
+            self.image_format_label.setText("Image format: " + str(self.imagem.format))
             self.image_size_label.setText("Image size: " + str(self.imagem.size))
             self.image_mode_label.setText("Image mode: " + self.imagem.mode)
 
@@ -215,3 +235,12 @@ class Window(QMainWindow):
             nova_imagem_array = quantizacao(imagem_array, tons, histograma)
             self.imagem = gerar_imagem(nova_imagem_array)
             self.update_image_display()
+    
+    def show_line_direction(self, line_direction):
+        self.line_direction_label.setText("Line direction: " + str(line_direction))
+    
+    def line_detector(self):
+        if self.imagem:
+            imagem_array = gerar_array_imagem(self.imagem)
+            line_direction = line_direction_detector(imagem_array)
+            self.show_line_direction(line_direction)
