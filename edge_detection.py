@@ -1,9 +1,12 @@
 import numpy as np
 import pandas as pd
+import cv2
+from PIL import Image, ImageOps
+
 
 def line_direction_detector(image_array):
 
-    # Definindo os kernels de Sobel
+    # Definindo os kernels de Sobel. Utilizando esses kernels não é necessário calcular a derivada da função da imagem.
     sobel_x = np.array([
         [-1, 0, 1],
         [-2, 0, 2],
@@ -59,3 +62,70 @@ def line_direction_detector(image_array):
         return("vertical")
     else:
         return("inclinada")
+    
+
+def is_homogeneous(region, threshold=40):
+    # Função que determina se uma região é homogênea com base em um limiar
+    return np.std(region) < threshold
+
+def split_and_merge(img, min_size=10):
+    width, height = img.size
+    
+    print(is_homogeneous(np.array(img)))
+
+    # Se a imagem for muito pequena ou homogênea, retorne a própria imagem
+    if height <= min_size or width <= min_size or is_homogeneous(np.array(img)):
+        return img
+    
+    # divide a imagem em quatro quadrantes
+    r1 = img.crop((0, 0, width//2, height//2))
+    r2 = img.crop((width//2, 0, width, height//2))
+    r3 = img.crop((0, height//2, width//2, height))
+    r4 = img.crop((width//2, height//2, width, height))
+    
+    # split and merge em cada quadrante
+    r1 = split_and_merge(r1, min_size)
+    r2 = split_and_merge(r2, min_size)
+    r3 = split_and_merge(r3, min_size)
+    r4 = split_and_merge(r4, min_size)
+    
+    # Mesclar os quadrantes em uma única imagem e retorna
+    merged = Image.new("L", (width, height))
+    merged.paste(r1, (0, 0))
+    merged.paste(r2, (width//2, 0))
+    merged.paste(r3, (0, height//2))
+    merged.paste(r4, (width//2, height//2))
+    
+    return merged
+
+def count_objects(binary_data):
+    # teste de detecção dos componentes
+
+    #Esse código converte todos os valores em 0 e 1 
+    #binary_image = (binary_data == 0).astype(np.uint8)
+
+    num_labels, _ = cv2.connectedComponents(binary_data)
+    print(f' {num_labels} objetos')
+
+    #Necessário descontar o fundo pois o cv2 detecta componente
+    num_labels -= 1
+    return num_labels # retorna o número de componentes conectados
+
+
+def prepare_image(image):
+    # Segmentação da imagem usando o método "split and merge"
+    segmented = split_and_merge(image)
+   
+    # Binarização da imagem segmentada
+    threshold = 200
+    binary_data = np.array(segmented)
+    
+    #Essa parte impacta na algoritmo de detecção de componentes conectados (cv2.connectedComponents(binary_data))
+    #Importante converter para 1 e 0 para o algortimo detectar corretamente
+    binary_data[binary_data <= threshold] = 1
+    binary_data[binary_data > threshold] = 0
+    
+    df = pd.DataFrame(binary_data)
+    df.to_excel(excel_writer="test2.xlsx")
+
+    return binary_data
