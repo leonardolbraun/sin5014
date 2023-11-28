@@ -3,33 +3,8 @@ import pandas as pd
 
 def line_direction_detector(image_array):
 
-    # Definindo os kernels de Sobel
-    sobel_x = np.array([
-        [-1, 0, 1],
-        [-2, 0, 2],
-        [-1, 0, 1]
-    ])
+    Gx, Gy = edge_detection(image_array)
     
-    sobel_y = np.array([
-        [-1, -2, -1],
-        [ 0,  0,  0],
-        [ 1,  2,  1]
-    ])
-
-    height, width  = image_array.shape
-
-    # Vetor para gradiente x e y
-    Gx = np.zeros((height, width))
-    Gy = np.zeros((height, width))
-
-    # Percorre a imagem para aplicar a convolução
-    for y in range(1, height - 1):
-        for x in range(1, width - 1):
-            # Para cada pixel, calcula a convolução de x e y
-            Gx[y, x] = np.sum(sobel_x * image_array[y-1:y+2, x-1:x+2])
-            Gy[y, x] = np.sum(sobel_y * image_array[y-1:y+2, x-1:x+2])
-
-
     # Calcula a magnitude e direção do gradiente
     magnitude = np.sqrt(Gx**2 + Gy**2)
     direction = np.arctan2(Gy, Gx) # Retorna valores entre -pi e pi
@@ -59,3 +34,39 @@ def line_direction_detector(image_array):
         return("vertical")
     else:
         return("inclinada")
+    
+
+def edge_detection(image_array):
+
+    # Definindo os kernels de Sobel
+    sobel_x = np.array([
+        [-1, 0, 1],
+        [-2, 0, 2],
+        [-1, 0, 1]
+    ])
+    
+    sobel_y = np.array([
+        [-1, -2, -1],
+        [ 0,  0,  0],
+        [ 1,  2,  1]
+    ])
+
+    height, width  = image_array.shape
+
+    # Vetor para gradiente x e y
+    Gx = np.zeros((height, width))
+    Gy = np.zeros((height, width))
+
+    # Percorre a imagem para aplicar a convolução
+    for y in range(1, height - 1):
+        for x in range(1, width - 1):
+            # Para cada pixel, calcula a convolução de x e y
+            Gx[y, x] = np.sum(sobel_x * image_array[y-1:y+2, x-1:x+2])
+            Gy[y, x] = np.sum(sobel_y * image_array[y-1:y+2, x-1:x+2])
+
+    matriz_concatenada = np.concatenate((Gx, Gy), axis=1)
+
+    df = pd.DataFrame(matriz_concatenada)
+    df.to_excel(excel_writer="testNew.xlsx")
+
+    return Gx, Gy
