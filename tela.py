@@ -4,7 +4,7 @@ from PyQt5.QtGui import QImage, QPixmap, QIntValidator
 from PIL import Image, ImageQt
 import io
 import matplotlib.pyplot as plt
-from edge_detection import line_direction_detector
+from edge_detection import line_direction_detector, prepare_image, count_objects
 from image_processing import gerar_imagem, gerar_array_imagem, gerar_histograma, clarear_imagem, escurecer_imagem, plotar_histograma, filtro_mediana, equalizacao, quantizacao
 
 class Window(QMainWindow):
@@ -115,12 +115,19 @@ class Window(QMainWindow):
         self.line_detector_btn.clicked.connect(self.line_detector)
         edge_layout.addWidget(self.line_detector_btn)
 
+        self.objects_detector_btn = QPushButton("Objects detector")
+        self.objects_detector_btn.clicked.connect(self.objects_detector)
+        edge_layout.addWidget(self.objects_detector_btn)
+
         self.line_direction_label = QLabel("Line direction: ")
         edge_layout.addWidget(self.line_direction_label)
 
+
+        self.objects_detected_label = QLabel("Objects detected: ")
+        edge_layout.addWidget(self.objects_detected_label)
+
         edge_groupbox.setLayout(edge_layout)
         right_layout.addWidget(edge_groupbox)
-
 
 
         # QGraphicsView to show histogram
@@ -238,9 +245,19 @@ class Window(QMainWindow):
     
     def show_line_direction(self, line_direction):
         self.line_direction_label.setText("Line direction: " + str(line_direction))
+
+    def show_objects_detected(self, objects_detected):
+        self.objects_detected_label.setText("Objects detected: " + str(objects_detected))
     
     def line_detector(self):
         if self.imagem:
             imagem_array = gerar_array_imagem(self.imagem)
             line_direction = line_direction_detector(imagem_array)
             self.show_line_direction(line_direction)
+
+    def objects_detector(self):
+        if self.imagem:
+            binary_image = prepare_image(self.imagem)
+            number_objects = count_objects(binary_image)
+            print(f'Há {number_objects} objetos na imagem.')    
+            self.show_objects_detected(number_objects)
